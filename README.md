@@ -1,32 +1,28 @@
 <?php 
 $mensaje = "";
-$contra = "";
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nombre = trim($_POST["nombre"]);
+    $matricula = trim($_POST["matricula"]);
+    $correo = trim($_POST["correo"]);
+    $contraseña = trim($_POST["contraseña"]);
     $fecha_nacimiento = $_POST["FechaNac"];
     $fecha_registro = $_POST["Fecha_Reg"];
+    $hora_registro = $_POST["Tiempo"];
+    $area = $_POST["area"];
 
     // Convertir fechas a objetos DateTime
     $fecha_nac = new DateTime($fecha_nacimiento);
-    $fecha_reg = new DateTime($fecha_registro);
     $hoy = new DateTime();
     // Calcular la edad 
     $edad = $hoy->diff($fecha_nac)->y;
 
-    // Obtener el día de la semana (1 = lunes, 7 = domingo)
-    $dia_semana_registro = $fecha_reg->format("N");
-
     // Validación 
-
-    if($nombre == " "){
-     $mensaje = "Por favor ingresa tu nombre";
-    }
-    elseif ($edad < 18) {
+    if(empty($nombre) || empty($matricula) || empty($correo) || empty($contraseña)){
+        $mensaje = "Por favor completa todos los campos.";
+    } elseif ($edad < 18) {
         $mensaje = "Error: debes ser mayor de 18 años para registrarte.";
-    } elseif ($dia_semana_registro >= 6) {
-        $mensaje = "Error: No puedes registrarte en fin de semana.";
     } else {
-        $mensaje = "Registro exitoso de: " . htmlspecialchars($nombre);
+        $mensaje = "Registro exitoso de: " . htmlspecialchars($nombre) . "<br>Matrícula: " . htmlspecialchars($matricula) . "<br>Correo Institucional: " . htmlspecialchars($correo) . "<br>Fecha de Nacimiento: " . htmlspecialchars($fecha_nacimiento) . "<br>Fecha de Registro: " . htmlspecialchars($fecha_registro) . "<br>Hora de Registro: " . htmlspecialchars($hora_registro) . "<br>Área seleccionada: " . htmlspecialchars($area);
     }
 }
 ?>
@@ -43,13 +39,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 <body>
     <form method="post">
-        <label for="Nombre">Nombre</label><br>
-        <input type="text" name="nombre" require ><br>
+        <label for="Nombre">Nombre Completo</label><br>
+        <input type="text" name="nombre" required ><br>
+        <label for="Matricula">Matrícula</label><br>
+        <input type="text" name="matricula" required ><br>
+        <label for="Correo">Correo Institucional</label><br>
+        <input type="email" name="correo" required ><br>
+        <label for="Contraseña">Contraseña</label><br>
+        <input type="password" name="contraseña" required ><br>
         <label for="FechaNac">Fecha Nacimiento</label><br>
-        <input type="date" name="FechaNac" require><br>
+        <input type="date" name="FechaNac" required><br>
         <label for="FechaReg">Fecha Registro</label><br>
-        <input type="date" name="Fecha_Reg" id="FechaRegistro" require ><br><br>
-        <br><input type="time" name="Tiempo" id="tiempo">
+        <input type="date" name="Fecha_Reg" required ><br>
+        <label for="Tiempo">Hora de Registro</label><br>
+        <input type="time" name="Tiempo" required><br>
+        <label for="Area">Área</label><br>
+        <select name="area" required>
+            <option value="Laboratorio de informatica">Laboratorio de informática</option>
+            <option value="Informática">Informática</option>
+            <option value="Auditorio">Auditorio</option>
+        </select><br><br>
         <button type="submit">Registrarse</button>
     </form>
     
@@ -58,17 +67,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <?= $mensaje ?>
         </div>
     <?php endif; ?>
-
-    <script>
-        document.getElementById("FechaRegistro").addEventListener("input", function() {
-            let fecha = new Date(this.value);
-            let diaSemana = fecha.getDay(); // 0 = domingo, 6 = sábado 
-
-            if (diaSemana === 5 || diaSemana === 6) {
-                alert("No puedes registrarte en fines de semana. Selecciona otro día.");
-                this.value = "";
-            }
-        });
-    </script>
 </body>
 </html>
