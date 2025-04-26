@@ -1,5 +1,19 @@
 <?php 
-$mensaje = "";
+class RegistroAlumno {
+    public $mensaje = "";
+
+    public function registrar($nombre, $matricula, $correo, $contraseña, $fecha_nacimiento, $fecha_registro, $hora_registro, $area) {
+        // Validación 
+        if(empty($nombre) || empty($matricula) || empty($correo) || empty($contraseña)){
+            $this->mensaje = "Por favor completa todos los campos.";
+        } else {
+            $this->mensaje = "Registro exitoso de: " . htmlspecialchars($nombre) . "<br>Matrícula: " . htmlspecialchars($matricula) . "<br>Correo Institucional: " . htmlspecialchars($correo) . "<br>Fecha de Nacimiento: " . htmlspecialchars($fecha_nacimiento) . "<br>Fecha de Registro: " . htmlspecialchars($fecha_registro) . "<br>Hora de Registro: " . htmlspecialchars($hora_registro) . "<br>Área seleccionada: " . htmlspecialchars($area);
+        }
+    }
+}
+
+$registro = new RegistroAlumno();
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nombre = trim($_POST["nombre"]);
     $matricula = trim($_POST["matricula"]);
@@ -10,20 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $hora_registro = $_POST["Tiempo"];
     $area = $_POST["area"];
 
-    // Convertir fechas a objetos DateTime
-    $fecha_nac = new DateTime($fecha_nacimiento);
-    $hoy = new DateTime();
-    // Calcular la edad 
-    $edad = $hoy->diff($fecha_nac)->y;
-
-    // Validación 
-    if(empty($nombre) || empty($matricula) || empty($correo) || empty($contraseña)){
-        $mensaje = "Por favor completa todos los campos.";
-    } elseif ($edad < 18) {
-        $mensaje = "Error: debes ser mayor de 18 años para registrarte.";
-    } else {
-        $mensaje = "Registro exitoso de: " . htmlspecialchars($nombre) . "<br>Matrícula: " . htmlspecialchars($matricula) . "<br>Correo Institucional: " . htmlspecialchars($correo) . "<br>Fecha de Nacimiento: " . htmlspecialchars($fecha_nacimiento) . "<br>Fecha de Registro: " . htmlspecialchars($fecha_registro) . "<br>Hora de Registro: " . htmlspecialchars($hora_registro) . "<br>Área seleccionada: " . htmlspecialchars($area);
-    }
+    $registro->registrar($nombre, $matricula, $correo, $contraseña, $fecha_nacimiento, $fecha_registro, $hora_registro, $area);
 }
 ?>
 <!DOCTYPE html>
@@ -62,9 +63,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <button type="submit">Registrarse</button>
     </form>
     
-    <?php if (!empty($mensaje)): ?>
-        <div class="<?= strpos($mensaje, 'exitoso') !== false ? 'alert-success' : 'alert-danger' ?>">
-            <?= $mensaje ?>
+    <?php if (!empty($registro->mensaje)): ?>
+        <div class="<?= strpos($registro->mensaje, 'exitoso') !== false ? 'alert-success' : 'alert-danger' ?>">
+            <?= $registro->mensaje ?>
         </div>
     <?php endif; ?>
 </body>
